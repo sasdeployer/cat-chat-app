@@ -1,0 +1,53 @@
+# How this app goes from a commit to live on Nexlayer.
+# Written by Nexlayer from what it read in this repo; owned by your coding
+# agent from here. Every agent and CI runs exactly this. Secret VALUES are
+# never written here.
+app: cat-chat-app
+deploy:
+  config: nexlayer.yaml
+  environment: ~   # set by the first deploy
+  through: nexlayer-mcp          # validate -> deploy -> status; nothing deploys around it
+build:
+  - pod: frontend             # the nexlayer.yaml pod that runs it
+    image: cat-chat-frontend         # registry.nexlayer.io/<your user id>/cat-chat-frontend:<tag>
+    context: frontend/
+    dockerfile: frontend/Dockerfile
+    platform: linux/amd64
+    tag: git-sha                 # immutable; "latest" is rejected
+    # read from `nexlayer.yaml`
+  - pod: backend             # the nexlayer.yaml pod that runs it
+    image: cat-chat-backend         # registry.nexlayer.io/<your user id>/cat-chat-backend:<tag>
+    context: backend/
+    dockerfile: backend/Dockerfile
+    platform: linux/amd64
+    tag: git-sha                 # immutable; "latest" is rejected
+    # read from `nexlayer.yaml`
+  - pod: database             # the nexlayer.yaml pod that runs it
+    image: cat-chat-database         # registry.nexlayer.io/<your user id>/cat-chat-database:<tag>
+    context: database/
+    dockerfile: database/Dockerfile
+    platform: linux/amd64
+    tag: git-sha                 # immutable; "latest" is rejected
+    # read from `nexlayer.yaml`
+services:
+  - name: frontend
+    port: 80
+    public: true   # read from `nexlayer.yaml`
+  - name: backend
+    port: 3001
+    public: false   # read from `nexlayer.yaml`
+  - name: database
+    port: 5432
+    public: false   # read from `nexlayer.yaml`
+verify:                         # done means all of these pass
+  - service: frontend
+    status: running             # nexlayer_check_deployment_status
+  - service: backend
+    status: running             # nexlayer_check_deployment_status
+  - service: database
+    status: running             # nexlayer_check_deployment_status
+  - url: /                       # the live URL answers 2xx/3xx with a real page
+secrets:                        # names only — values live in Nexlayer
+  - name: DB_PASSWORD
+    status: optional
+rollback: redeploy the previous image tag from the Nexlayer deploy history
