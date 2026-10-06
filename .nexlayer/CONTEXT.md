@@ -5,7 +5,7 @@ starts with the same picture. Read this before proposing infrastructure
 changes.
 
 - **Repo** `https://github.com/sasdeployer/cat-chat-app` on `main`
-- **Analyzed** 2026-10-06T22:28:04.211Z
+- **Analyzed** 2026-10-06T22:28:17.019Z
 
 ## Stack
 
@@ -44,6 +44,14 @@ When you deploy through the Nexlayer MCP, Nexlayer fills each name from this
 app's Secrets. Values never go in this repo, the chat, or your context.
 
 - `DB_PASSWORD` — optional, not set. Found in the code; not needed to start the app.
+
+## What the human told us
+
+**Stage.** This is a side project.
+
+Said by a person, not derived from the code. Where this contradicts what
+the repo looks like, the person is right about intent and the repo is
+right about what exists today.
 
 ## Notes from the analysis
 
